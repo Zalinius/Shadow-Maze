@@ -35,9 +35,21 @@ public class Wall implements GameObject, Collidable{
 
 	@Override
 	public Shape getCollisionBox() {
-		return new Rectangle(Point2D.add(center, dimensions.scale(-0.5)),Point2D.add(center, dimensions.scale(0.5)));
+		return new Rectangle(blCorner(),trCorner());
 	}
 	
+	public Point2D blCorner() {
+		return Point2D.add(center, dimensions.scale(-0.5));
+	}
+	public Point2D tlCorner() {
+		return Point2D.add(center, new Vector2D(dimensions.x * -0.5, dimensions.y * 0.5));
+	}
+	public Point2D trCorner() {
+		return Point2D.add(center, dimensions.scale(0.5));
+	}
+	public Point2D brCorner() {
+		return Point2D.add(center, new Vector2D(dimensions.x * 0.5, dimensions.y * -0.5));
+	}
 	
 	public double leftSide() {
 		return center.x - dimensions.x/2;

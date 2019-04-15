@@ -12,6 +12,8 @@ import com.zalinius.architecture.input.Button;
 import com.zalinius.architecture.input.Inputtable;
 import com.zalinius.geometry.Rectangle;
 import com.zalinius.physics.Point2D;
+import com.zalinius.physics.UnitVector;
+import com.zalinius.physics.Vector2D;
 import com.zalinius.physics.collisions.Collision;
 import com.zalinius.utilities.Debug;
 import com.zalinius.utilities.ZMath;
@@ -19,7 +21,9 @@ import com.zalinius.utilities.ZMath;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.stage.Stage;
+import math.Line;
 import player.Player;
 
 public class ShadowMaze extends GameContainer implements GameObject {
@@ -64,10 +68,25 @@ public class ShadowMaze extends GameContainer implements GameObject {
 	public void render(GraphicsContext gc) {
 		gc.setFill(Color.AQUA);
 		gc.fillRect(0, 0, width, height);
+		Wall wall = null;
 		for (Iterator<Wall> wallIt = walls.iterator(); wallIt.hasNext();) {
-			wallIt.next().render(gc);
+			wall = wallIt.next();
+			wall.render(gc);
 		}
 		player.render(gc);
+		gc.setFill(Color.BLACK);
+		gc.beginPath();
+		gc.setFillRule(FillRule.EVEN_ODD);
+		gc.moveTo(0, 0);
+		Line ray = new Line(player.position(), new UnitVector(new Vector2D(player.position(), wall.tlCorner())));
+		gc.lineTo(0, ray.solveForY(0));
+		gc.lineTo(wall.leftSide(), wall.upSide());
+		gc.lineTo(wall.rightSide(), wall.downSide());
+		ray = new Line(player.position(), new UnitVector(new Vector2D(player.position(), wall.brCorner())));
+		gc.lineTo(ray.solveForX(0), 0);
+		gc.lineTo(0, 0);
+		gc.closePath();
+		gc.fill();
 	}
 
 	@Override
